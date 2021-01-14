@@ -2,6 +2,7 @@ const app = new Vue({
     el: '#app',
     data: {
         URL_SERVER: 'http://localhost:3000',
+        user: '',
         tasks: [],
         category: [],
         isUserLogin: false,
@@ -20,6 +21,7 @@ const app = new Vue({
             if (localStorage.access_token) {
                 this.getAllTask()
                 this.isUserLogin = true
+                this.user = localStorage.user
             } else {
                 this.isUserLogin = false
             }
@@ -37,11 +39,20 @@ const app = new Vue({
 
                 // console.log('>>> berhasil login', response.data)
                 localStorage.setItem('access_token', response.data.access_token)
+                localStorage.setItem('user', email)
+                this.user = localStorage.user
 
                 this.inputLogin.email = ''
                 this.inputLogin.password = ''
 
                 this.checkAuth()
+                Swal.fire({
+                    icon: 'success',
+                    title: `You are login using ${email}!`,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
             } catch (err) {
                 console.log(err)
             }
@@ -54,6 +65,12 @@ const app = new Vue({
 
             localStorage.clear()
             this.checkAuth()
+            Swal.fire({
+                icon: 'success',
+                title: 'You are logout !',
+                showConfirmButton: false,
+                timer: 1500
+            })
         },
         async register() {
             try {
@@ -71,8 +88,22 @@ const app = new Vue({
                 this.inputRegister.password = ''
 
                 this.showLoginPage()
+
+                Swal.fire({
+                    icon: 'success',
+                    title: `${email} is success registered, please login !`,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             } catch (err) {
                 console.log(err)
+
+                Swal.fire({
+                    icon: 'error',
+                    title: err,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
         },
         async getAllTask() {
@@ -109,8 +140,21 @@ const app = new Vue({
 
                 this.checkAuth()
 
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success deleted!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
             } catch (err) {
                 console.log(err)
+                Swal.fire({
+                    icon: 'error',
+                    title: "You don't have permision !",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
             }
         }
     },

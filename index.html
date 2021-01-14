@@ -48,6 +48,7 @@
         <nav class="navbar navbar-expand-lg navbar-light" style="height: 80px;">
             <div class="container" style="display: flex; justify-content: space-between;">
                 <img src="./assets/logo.png" width="80 px" />
+                <button v-if="isUserLogin" class="btn btn-sm btn-dark">Welcome {{user}}</button>
                 <button v-if="isUserLogin" class="btn btn-sm btn-success shadow" @click="logout">logout</button>
             </div>
         </nav>
@@ -100,7 +101,7 @@
             </div>
         </section>
 
-        <!-- Page Content -->
+        <!-- Page Task -->
         <section v-if="isUserLogin" id="Kanban" style="height: calc(100vh - 90px); width: 100vw;">
             <div class="row flex-row align-items-start justify-content-evenly" style="min-height: 100%;">
 
@@ -127,7 +128,13 @@
             </div>
         </section>
 
+        <!-- Page Edit Task -->
+
+
     </div>
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
