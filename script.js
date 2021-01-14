@@ -5,7 +5,12 @@ const app = new Vue({
         task: [],
         category: [],
         isUserLogin: false,
+        loginPage: true,
         inputLogin: {
+            email: '',
+            password: ''
+        },
+        inputRegister: {
             email: '',
             password: ''
         }
@@ -46,9 +51,29 @@ const app = new Vue({
 
             this.task = []
             // console.log('>>> task : ', this.task)
-            
+
             localStorage.clear()
             this.checkAuth()
+        },
+        async register() {
+            try {
+                let { email, password } = this.inputRegister
+                console.log('>>> input register', email, password)
+
+                let URL = this.URL_SERVER + '/user/register'
+                let response = await axios.post(URL, {
+                    email: email,
+                    password: password
+                })
+
+                console.log('>>> berhasil ', response.data)
+                this.inputRegister.email = ''
+                this.inputRegister.password = ''
+
+                this.showLoginPage()
+            } catch (err) {
+                console.log(err)
+            }
         },
         async getAllTask() {
             try {
@@ -63,6 +88,12 @@ const app = new Vue({
             } catch (err) {
                 console.log(err)
             }
+        },
+        showLoginPage() {
+            this.loginPage = true
+        },
+        showRegisterPage() {
+            this.loginPage = false
         }
     },
     created() {

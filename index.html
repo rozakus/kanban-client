@@ -48,12 +48,12 @@
         <nav class="navbar navbar-expand-lg navbar-light" style="height: 80px;">
             <div class="container" style="display: flex; justify-content: space-between;">
                 <img src="./assets/logo.png" width="80 px" />
-                <button class="btn btn-sm btn-success shadow" @click="logout">logout</button>
+                <button v-if="isUserLogin" class="btn btn-sm btn-success shadow" @click="logout">logout</button>
             </div>
         </nav>
 
         <!-- Login -->
-        <section style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-login">
+        <section v-if="!isUserLogin && loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-login">
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Login</h2>
@@ -67,7 +67,7 @@
                             style="margin: 15px 0px;">
 
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
-                        <button class="w-100 btn btn-lg btn-danger" type="button" id="to-page-register"
+                        <button @click="showRegisterPage" class="w-100 btn btn-lg btn-danger" type="button" id="to-page-register"
                             style="margin: 15px 0px;">Register an Account</button>
                         <!-- <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div> -->
                     </form>
@@ -76,30 +76,30 @@
         </section>
 
         <!-- Register -->
-        <!-- <section style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-register">
+        <section v-if="!isUserLogin && !loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-register">
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Register</h2>
-                    <form id="register">
+                    <form @submit.prevent="register">
                         <label for="emailRegister">Email address</label>
-                        <input type="email" id="emailRegister" class="form-control" placeholder="Email address" required
+                        <input v-model="inputRegister.email" type="email" id="emailRegister" class="form-control" placeholder="Email address" required
                             autofocus style="margin: 15px 0px;">
 
                         <label for="passwordRegister">Password</label>
-                        <input type="password" id="passwordRegister" class="form-control" placeholder="Password"
+                        <input v-model="inputRegister.password" type="password" id="passwordRegister" class="form-control" placeholder="Password"
                             required style="margin: 15px 0px;">
 
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
-                        <button class="w-100 btn btn-lg btn-warning" type="button" id="to-page-login"
+                        <button @click="showLoginPage" class="w-100 btn btn-lg btn-warning" type="button" id="to-page-login"
                             style="margin: 15px 0px;">Already have an account</button>
-                        <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div>
+                        <!-- <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div> -->
                     </form>
                 </div>
             </div>
-        </section> -->
+        </section>
 
         <!-- Page Content -->
-        <section id="Kanban" style="height: calc(100vh - 90px); width: 100vw;">
+        <section v-if="isUserLogin" id="Kanban" style="height: calc(100vh - 90px); width: 100vw;">
             <div class="row flex-row align-items-start justify-content-evenly" style="min-height: 100%;">
 
                 <div class="col-3" style="height: 100%;" id="task-backlog">
