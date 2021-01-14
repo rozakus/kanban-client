@@ -36,11 +36,7 @@
 
         .btn {
             border-radius: 20px;
-            padding: 15px;
-        }
-
-        .card-category {
-            margin: 5px;
+            padding: 12px;
         }
     </style>
 </head>
@@ -52,7 +48,7 @@
         <nav class="navbar navbar-expand-lg navbar-light" style="height: 80px;">
             <div class="container" style="display: flex; justify-content: space-between;">
                 <img src="./assets/logo.png" width="80 px" />
-                <button class="btn btn-sm btn-success shadow">logout</button>
+                <button class="btn btn-sm btn-success shadow" @click="logout">logout</button>
             </div>
         </nav>
 
@@ -61,13 +57,13 @@
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Login</h2>
-                    <form id="login">
+                    <form @submit.prevent="login">
                         <label for="emailLogin">Email address</label>
-                        <input type="email" id="emailLogin" class="form-control" placeholder="Email address" required
+                        <input v-model="inputLogin.email" type="email" id="emailLogin" class="form-control" placeholder="Email address" required
                             autofocus style="margin: 15px 0px;">
 
                         <label for="passwordLogin">Password</label>
-                        <input type="password" id="passwordLogin" class="form-control" placeholder="Password" required
+                        <input v-model="inputLogin.password" type="password" id="passwordLogin" class="form-control" placeholder="Password" required
                             style="margin: 15px 0px;">
 
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
@@ -80,7 +76,7 @@
         </section>
 
         <!-- Register -->
-        <section style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-register">
+        <!-- <section style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-register">
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Register</h2>
@@ -96,73 +92,104 @@
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
                         <button class="w-100 btn btn-lg btn-warning" type="button" id="to-page-login"
                             style="margin: 15px 0px;">Already have an account</button>
-                        <!-- <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div> -->
+                        <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div>
                     </form>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- Page Content -->
-        <section id="Kanban" style="height: calc(100vh - 90px); width: 100%;">
-            <div class="row flex-row justify-content-evenly" style="height: 100%;">
+        <section id="Kanban" style="height: calc(100vh - 90px); width: 100vw;">
+            <div class="row flex-row align-items-start justify-content-evenly" style="min-height: 100%;">
 
-                <!-- backlog -->
-                <div class="col-3 card-category" style="height: 100%;">
-                    <div class="card flex-column shadow" id="task-backlog" style="height: 100%;">
-                        <div class="card-header bg-danger">Backlog</div>
-                        <div class="card-body" data-bs-spy="scroll" data-bs-target="#task-backlog" data-bs-offset="0" tabindex="0">
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                        </div>
-                        <div class="card-footer">Add New Task</div>
-                    </div>
-                </div>
-
-                <!-- todo -->
-                <div class="col-3">
+                <div class="col-3" style="height: 100%;" id="task-backlog">
                     <div class="card flex-column shadow" style="height: 100%;">
-                        <div class="card-header bg-warning">Todo</div>
+                        <div class="card-header bg-danger text-center fs-6 fw-bold fst-italic shadow"
+                            style="border-radius: 20px;">Backlog</div>
                         <div class="card-body" style="flex-grow: 1;">
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
+                            <div class="my-2 card btn-outline-danger" style="font-size: 12px;">
+                                <div>
+                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
+                                    <p class="m-0">by user01@gmail.com</p>
+                                </div>
+                                <div>
+                                    <a>delete</a>
+                                    <a>edit</a>
+                                    <a>move</a>
+                                </div>
+                            </div>
+                            <div class="my-2 card btn-outline-danger" style="font-size: 12px;">
+                                <div>
+                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
+                                    <p class="m-0">by user01@gmail.com</p>
+                                </div>
+                                <div>
+                                    <a>delete</a>
+                                    <a>edit</a>
+                                    <a>move</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-footer">Add New Task</div>
                     </div>
                 </div>
 
-                <!-- doing -->
-                <div class="col-3">
+                <div class="col-3" style="height: 100%;" id="task-todo">
                     <div class="card flex-column shadow" style="height: 100%;">
-                        <div class="card-header bg-primary">Doing</div>
-                        <div class="card-body">
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
+                        <div class="card-header bg-warning text-center fs-6 fw-bold fst-italic shadow"
+                            style="border-radius: 20px;">Todo</div>
+                        <div class="card-body" style="flex-grow: 1;">
+                            <div class="my-2 card btn-outline-warning" style="font-size: 12px;">
+                                <div>
+                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
+                                    <p class="m-0">by user01@gmail.com</p>
+                                </div>
+                                <div>
+                                    <a>delete</a>
+                                    <a>edit</a>
+                                    <a>move</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-footer">Add New Task</div>
                     </div>
                 </div>
 
-                <!-- done -->
-                <div class="col-2">
+                <div class="col-3" style="height: 100%;" id="task-doing">
                     <div class="card flex-column shadow" style="height: 100%;">
-                        <div class="card-header bg-success">Done</div>
+                        <div class="card-header bg-primary text-center fs-6 fw-bold fst-italic shadow"
+                            style="border-radius: 20px;">Doing</div>
                         <div class="card-body">
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
+                            <div class="my-2 card btn-outline-primary" style="font-size: 12px;">
+                                <div>
+                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
+                                    <p class="m-0">by user01@gmail.com</p>
+                                </div>
+                                <div>
+                                    <a>delete</a>
+                                    <a>edit</a>
+                                    <a>move</a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-footer">Add New Task</div>
+                    </div>
+                </div>
+
+                <div class="col-3" style="height: 100%;" id="task-done">
+                    <div class="card flex-column shadow" style="height: 100%;">
+                        <div class="card-header bg-success text-center fs-6 fw-bold fst-italic shadow"
+                            style="border-radius: 20px;">Done</div>
+                        <div class="card-body">
+                            <div class="my-2 card btn-outline-success" style="font-size: 12px;">
+                                <div>
+                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
+                                    <p class="m-0">by user01@gmail.com</p>
+                                </div>
+                                <div>
+                                    <a>delete</a>
+                                    <a>edit</a>
+                                    <a>move</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -183,7 +210,9 @@
 
     <!-- Vue -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-    <script src="./sandbox.js"></script>
+
+    <!-- Js -->
+    <script src="./script.js"></script>
 </body>
 
 </html>
