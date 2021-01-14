@@ -53,22 +53,23 @@
         </nav>
 
         <!-- Login -->
-        <section v-if="!isUserLogin && loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-login">
+        <section v-if="!isUserLogin && loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;"
+            id="page-login">
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Login</h2>
                     <form @submit.prevent="login">
                         <label for="emailLogin">Email address</label>
-                        <input v-model="inputLogin.email" type="email" id="emailLogin" class="form-control" placeholder="Email address" required
-                            autofocus style="margin: 15px 0px;">
+                        <input v-model="inputLogin.email" type="email" id="emailLogin" class="form-control"
+                            placeholder="Email address" required autofocus style="margin: 15px 0px;">
 
                         <label for="passwordLogin">Password</label>
-                        <input v-model="inputLogin.password" type="password" id="passwordLogin" class="form-control" placeholder="Password" required
-                            style="margin: 15px 0px;">
+                        <input v-model="inputLogin.password" type="password" id="passwordLogin" class="form-control"
+                            placeholder="Password" required style="margin: 15px 0px;">
 
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
-                        <button @click="showRegisterPage" class="w-100 btn btn-lg btn-danger" type="button" id="to-page-register"
-                            style="margin: 15px 0px;">Register an Account</button>
+                        <button @click="showRegisterPage" class="w-100 btn btn-lg btn-danger" type="button"
+                            id="to-page-register" style="margin: 15px 0px;">Register an Account</button>
                         <!-- <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div> -->
                     </form>
                 </div>
@@ -76,22 +77,23 @@
         </section>
 
         <!-- Register -->
-        <section v-if="!isUserLogin && !loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;" id="page-register">
+        <section v-if="!isUserLogin && !loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;"
+            id="page-register">
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Register</h2>
                     <form @submit.prevent="register">
                         <label for="emailRegister">Email address</label>
-                        <input v-model="inputRegister.email" type="email" id="emailRegister" class="form-control" placeholder="Email address" required
-                            autofocus style="margin: 15px 0px;">
+                        <input v-model="inputRegister.email" type="email" id="emailRegister" class="form-control"
+                            placeholder="Email address" required autofocus style="margin: 15px 0px;">
 
                         <label for="passwordRegister">Password</label>
-                        <input v-model="inputRegister.password" type="password" id="passwordRegister" class="form-control" placeholder="Password"
-                            required style="margin: 15px 0px;">
+                        <input v-model="inputRegister.password" type="password" id="passwordRegister"
+                            class="form-control" placeholder="Password" required style="margin: 15px 0px;">
 
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
-                        <button @click="showLoginPage" class="w-100 btn btn-lg btn-warning" type="button" id="to-page-login"
-                            style="margin: 15px 0px;">Already have an account</button>
+                        <button @click="showLoginPage" class="w-100 btn btn-lg btn-warning" type="button"
+                            id="to-page-login" style="margin: 15px 0px;">Already have an account</button>
                         <!-- <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div> -->
                     </form>
                 </div>
@@ -102,29 +104,18 @@
         <section v-if="isUserLogin" id="Kanban" style="height: calc(100vh - 90px); width: 100vw;">
             <div class="row flex-row align-items-start justify-content-evenly" style="min-height: 100%;">
 
-                <div class="col-3" style="height: 100%;" id="task-backlog">
+                <div v-for="(categories, indexCategory) in tasks" :key="indexCategory" class="col-3" style="height: 100%;">
                     <div class="card flex-column shadow" style="height: 100%;">
                         <div class="card-header bg-danger text-center fs-6 fw-bold fst-italic shadow"
-                            style="border-radius: 20px;">Backlog</div>
+                            style="border-radius: 20px;">{{categories.category}}</div>
                         <div class="card-body" style="flex-grow: 1;">
-                            <div class="my-2 card btn-outline-danger" style="font-size: 12px;">
+                            <div v-for="(task, indexTask) in categories.Tasks" :key="indexTask" class="my-2 card btn-outline-danger" style="font-size: 12px;">
                                 <div>
-                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
-                                    <p class="m-0">by user01@gmail.com</p>
+                                    <p class="fw-bold fst-italic m-0">{{task.title}}</p>
+                                    <p class="m-0">by {{task.User.email}}</p>
                                 </div>
                                 <div>
-                                    <a>delete</a>
-                                    <a>edit</a>
-                                    <a>move</a>
-                                </div>
-                            </div>
-                            <div class="my-2 card btn-outline-danger" style="font-size: 12px;">
-                                <div>
-                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
-                                    <p class="m-0">by user01@gmail.com</p>
-                                </div>
-                                <div>
-                                    <a>delete</a>
+                                    <a @click="deleteTask(task.id)">delete</a>
                                     <a>edit</a>
                                     <a>move</a>
                                 </div>
@@ -133,65 +124,6 @@
                     </div>
                 </div>
 
-                <div class="col-3" style="height: 100%;" id="task-todo">
-                    <div class="card flex-column shadow" style="height: 100%;">
-                        <div class="card-header bg-warning text-center fs-6 fw-bold fst-italic shadow"
-                            style="border-radius: 20px;">Todo</div>
-                        <div class="card-body" style="flex-grow: 1;">
-                            <div class="my-2 card btn-outline-warning" style="font-size: 12px;">
-                                <div>
-                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
-                                    <p class="m-0">by user01@gmail.com</p>
-                                </div>
-                                <div>
-                                    <a>delete</a>
-                                    <a>edit</a>
-                                    <a>move</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-3" style="height: 100%;" id="task-doing">
-                    <div class="card flex-column shadow" style="height: 100%;">
-                        <div class="card-header bg-primary text-center fs-6 fw-bold fst-italic shadow"
-                            style="border-radius: 20px;">Doing</div>
-                        <div class="card-body">
-                            <div class="my-2 card btn-outline-primary" style="font-size: 12px;">
-                                <div>
-                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
-                                    <p class="m-0">by user01@gmail.com</p>
-                                </div>
-                                <div>
-                                    <a>delete</a>
-                                    <a>edit</a>
-                                    <a>move</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-3" style="height: 100%;" id="task-done">
-                    <div class="card flex-column shadow" style="height: 100%;">
-                        <div class="card-header bg-success text-center fs-6 fw-bold fst-italic shadow"
-                            style="border-radius: 20px;">Done</div>
-                        <div class="card-body">
-                            <div class="my-2 card btn-outline-success" style="font-size: 12px;">
-                                <div>
-                                    <p class="fw-bold fst-italic m-0">Lagi makan</p>
-                                    <p class="m-0">by user01@gmail.com</p>
-                                </div>
-                                <div>
-                                    <a>delete</a>
-                                    <a>edit</a>
-                                    <a>move</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
