@@ -7,6 +7,8 @@ const app = new Vue({
         category: [],
         isUserLogin: false,
         loginPage: true,
+        showTaskPage: true,
+        showAddTaskPage: false,
         inputLogin: {
             email: '',
             password: ''
@@ -14,6 +16,10 @@ const app = new Vue({
         inputRegister: {
             email: '',
             password: ''
+        },
+        inputNewTask: {
+            title: '',
+            CategoryId: null
         }
     },
     methods: {
@@ -21,6 +27,8 @@ const app = new Vue({
             if (localStorage.access_token) {
                 this.getAllTask()
                 this.isUserLogin = true
+                this.showTaskPage = true
+                this.showAddTaskPage = false
                 this.user = localStorage.user
             } else {
                 this.isUserLogin = false
@@ -106,6 +114,44 @@ const app = new Vue({
                 })
             }
         },
+        async addNewTask() {
+            try {
+                let title = this.inputNewTask.title
+                let CategoryId = +this.inputNewTask.CategoryId
+                // console.log('>>> addNewTask', title, CategoryId, typeof CategoryId)
+
+                let data = {
+                    title: title,
+                    CategoryId: CategoryId
+                }
+
+                let URL = this.URL_SERVER + '/task'
+                // console.log('>>> URL : ', URL)
+                let response = await axios.post(URL, data, {
+                    headers: { access_token: localStorage.access_token }
+                })
+
+                Swal.fire({
+                    icon: 'success',
+                    title: `New task : ${title} is Added from ${localStorage.user}!`,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+                this.inputNewTask.title = ''
+                this.inputNewTask.CategoryId = ''
+
+                this.checkAuth()
+
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: err,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        },
         async getAllTask() {
             try {
                 let URL = this.URL_SERVER + '/task'
@@ -126,6 +172,13 @@ const app = new Vue({
         },
         showRegisterPage() {
             this.loginPage = false
+        },
+        showAddNewTaskPage() {
+            this.showTaskPage = false
+            this.showAddTaskPage = true
+        },
+        cancel() {
+            this.checkAuth()
         },
         async deleteTask(idTask) {
             try {
