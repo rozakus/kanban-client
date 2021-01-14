@@ -4,11 +4,9 @@ const app = new Vue({
         URL_SERVER: 'http://localhost:3000',
         user: '',
         tasks: [],
-        category: [],
+        categories: [],
+        page: '',
         isUserLogin: false,
-        loginPage: true,
-        showTaskPage: true,
-        showAddTaskPage: false,
         inputLogin: {
             email: '',
             password: ''
@@ -20,17 +18,18 @@ const app = new Vue({
         inputNewTask: {
             title: '',
             CategoryId: null
-        }
+        },
+        editTask: {}
     },
     methods: {
         checkAuth() {
             if (localStorage.access_token) {
                 this.getAllTask()
+                this.page = 'main'
                 this.isUserLogin = true
-                this.showTaskPage = true
-                this.showAddTaskPage = false
                 this.user = localStorage.user
             } else {
+                this.page = 'login'
                 this.isUserLogin = false
             }
         },
@@ -68,8 +67,10 @@ const app = new Vue({
         logout() {
             // console.log('logout')
 
-            this.task = []
-            // console.log('>>> task : ', this.task)
+            this.tasks = []
+            this.categories = []
+            // console.log('>>> task : ', this.tasks)
+            // console.log('>>> categories : ', this.categories)
 
             localStorage.clear()
             this.checkAuth()
@@ -118,7 +119,7 @@ const app = new Vue({
             try {
                 let title = this.inputNewTask.title
                 let CategoryId = +this.inputNewTask.CategoryId
-                // console.log('>>> addNewTask', title, CategoryId, typeof CategoryId)
+                console.log('>>> addNewTask', title, CategoryId, typeof CategoryId)
 
                 let data = {
                     title: title,
@@ -161,21 +162,29 @@ const app = new Vue({
 
                 // console.log(response.data)
                 this.tasks = response.data
+                this.categories = response.data.map(category => {
+                    return {
+                        id: category.id,
+                        category: category.category
+                    }
+                })
                 // console.log('>>> task : ')
                 // console.log(this.tasks)
+
+                console.log('>>> categories : ')
+                console.log(this.categories)
             } catch (err) {
                 console.log(err)
             }
         },
         showLoginPage() {
-            this.loginPage = true
+            this.page = 'login'
         },
         showRegisterPage() {
-            this.loginPage = false
+            this.page = 'register'
         },
         showAddNewTaskPage() {
-            this.showTaskPage = false
-            this.showAddTaskPage = true
+            this.page = 'addTask'
         },
         cancel() {
             this.checkAuth()
@@ -209,7 +218,56 @@ const app = new Vue({
                     timer: 1500
                 })
             }
-        }
+        },
+        showEditTask(task) {
+            // console.log('>>> edit task', task)
+
+            if (localStorage.user !== task.User.email) {
+
+                Swal.fire({
+                    icon: 'error',
+                    title: "You don't have permision !",
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+            } else {
+                this.editTask = task
+                console.log('>>> editTask : ', this.editTask)
+                this.page = 'editTask'
+
+            }
+        },
+        async updateTask() {
+            try {
+                console.log('>>> edit Task', this.editTask)
+                let id = this.editTask.id
+                let title = this.editTask.title
+                let CategoryId = this.editTask.CategoryId
+
+                let URL = this.URL_SERVER + `/task/${id}/${CategoryId}`
+                let response = await axios.put(URL, { title }, {
+                    headers: { access_token: localStorage.access_token }
+                })
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success updated!',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+                this.checkAuth()
+                
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: err,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        },
     },
     created() {
         console.log('>>> created')

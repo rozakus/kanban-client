@@ -22,6 +22,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background: url('./assets/background-03.jpg') no-repeat center center fixed;
             -webkit-background-size: cover;
@@ -56,7 +60,7 @@
         </nav>
 
         <!-- Login -->
-        <section v-if="!isUserLogin && loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;"
+        <section v-if="page === 'login'" style="display: flex; justify-content: flex-end; margin: 50px 0;"
             id="page-login">
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
@@ -80,7 +84,7 @@
         </section>
 
         <!-- Register -->
-        <section v-if="!isUserLogin && !loginPage" style="display: flex; justify-content: flex-end; margin: 50px 0;"
+        <section v-if="page === 'register'" style="display: flex; justify-content: flex-end; margin: 50px 0;"
             id="page-register">
             <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
                 <div class="card-body">
@@ -104,7 +108,7 @@
         </section>
 
         <!-- Page Task -->
-        <section v-if="isUserLogin && showTaskPage" style="height: calc(100vh - 90px); width: 100vw;">
+        <section v-if="page === 'main'" style="height: calc(100vh - 90px); width: 100vw;">
             <div class="row flex-row align-items-start justify-content-evenly" style="min-height: 100%;">
 
                 <div v-for="(categories, indexCategory) in tasks" :key="indexCategory" class="col-3"
@@ -122,10 +126,8 @@
                                 <div class="my-1">
                                     <button @click="deleteTask(task.id)" class="btn btn-sm btn-dark bi bi-trash-fill"
                                         style="padding: 2px 5px;">delete</button>
-                                    <button @click="" class="btn btn-sm btn-dark bi bi-tags-fill"
+                                    <button @click="showEditTask(task)" class="btn btn-sm btn-dark bi bi-tags-fill"
                                         style="padding: 2px 5px;">edit</button>
-                                    <button @click="" class="btn btn-sm btn-dark bi bi-arrow-left-right"
-                                        style="padding: 2px 5px;">move</button>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +138,7 @@
         </section>
 
         <!-- Page Add Task -->
-        <section v-if="isUserLogin && showAddTaskPage" style="height: calc(100vh - 90px); width: 100vw;">
+        <section v-if="page === 'addTask'" style="height: calc(100vh - 90px); width: 100vw;">
             <div class="container text-center">
                 <div class="card">
                     <form @submit.prevent="addNewTask">
@@ -150,10 +152,7 @@
                             <label class="input-group-text" for="inputGroupSelect01">Category</label>
                             <select class="form-select" id="inputGroupSelect01" v-model="inputNewTask.CategoryId" required>
                                 <option selected>Choose Category</option>
-                                <option value="1">backlog</option>
-                                <option value="2">todo</option>
-                                <option value="3">doing</option>
-                                <option value="4">done</option>
+                                <option v-for="(category) in categories" :key="category.id" :value="category.id">{{category.category}}</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -164,6 +163,29 @@
         </section>
 
         <!-- Page Edit Task -->
+        <section v-if="page === 'editTask'" style="height: calc(100vh - 90px); width: 100vw;">
+            <div class="container text-center">
+                <div class="card">
+                    <form @submit.prevent="updateTask">
+                        <h4>Edit Task</h4>
+                        <div class="input-group my-5">
+                            <span class="input-group-text">Task</span>
+                            <textarea v-model="editTask.title" class="form-control" aria-label="With textarea"
+                                style="height: 100px;" required></textarea>
+                        </div>
+                        <div class="input-group mb-3 my-5">
+                            <label class="input-group-text" for="inputGroupSelect01">Category</label>
+                            <select class="form-select" id="inputGroupSelect01" v-model="editTask.CategoryId" required>
+                                <option selected>Choose Category</option>
+                                <option v-for="(category) in categories" :key="category.id" :value="category.id">{{category.category}}</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button @click="cancel" class="btn btn-danger">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </section>
 
     </div>
 
