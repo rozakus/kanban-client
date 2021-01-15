@@ -24,11 +24,13 @@
               id="inputGroupSelect01"
               required
             >
-              <option selected>Choose Category</option>
-              <option value="1">backlog</option>
-              <option value="2">todo</option>
-              <option value="3">doing</option>
-              <option value="4">done</option>
+              <option
+                v-for="category in categories"
+                :key="category.id"
+                :value="category.id"
+              >
+                {{ category.category }}
+              </option>
             </select>
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
@@ -50,6 +52,7 @@ export default {
       },
     };
   },
+  props: ["categories"],
   methods: {
     addNewTask() {
       this.$emit("addNewTask", this.inputNewTask);

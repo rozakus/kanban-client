@@ -28,6 +28,7 @@
 
     <TaskAddPage
       v-if="page === 'addTask'"
+      :categories="categories"
       @cancel="cancel"
       @addNewTask="addNewTask"
     ></TaskAddPage>
@@ -35,6 +36,7 @@
     <TaskEditPage
       v-if="page === 'editTask'"
       :editTask="editTask"
+      :categories="categories"
       @cancel="cancel"
       @updateTask="updateTask"
     ></TaskEditPage>
@@ -236,11 +238,11 @@ export default {
             };
           });
 
-          // console.log(">>> task : ");
-          // console.log(this.tasks);
+          console.log(">>> task : ");
+          console.log(this.tasks);
 
-          // console.log(">>> categories : ");
-          // console.log(this.categories);
+          console.log(">>> categories : ");
+          console.log(this.categories);
         })
         .catch((err) => {
           console.log(err);
@@ -339,8 +341,8 @@ export default {
             title: err,
             showConfirmButton: false,
             timer: 1500,
-          })
-        })
+          });
+        });
     },
   },
 };
