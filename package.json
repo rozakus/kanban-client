@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/rozakus/kanban-client#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "vue": "^2.6.12",
     "vue-hot-reload-api": "^2.3.4"
   },
