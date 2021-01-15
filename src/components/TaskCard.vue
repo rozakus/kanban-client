@@ -4,6 +4,7 @@
       <p class="fw-bold fst-italic m-0">{{ task.title }}</p>
       <p class="m-0">by {{ task.User.email }}</p>
     </div>
+
     <div class="my-1">
       <button
         @click="deleteTask(task.id)"
@@ -12,7 +13,9 @@
       >
         delete
       </button>
+
       <button
+        @click="showEditTask(task)"
         class="btn btn-sm btn-dark bi bi-tags-fill"
         style="padding: 2px 5px"
       >
@@ -25,12 +28,15 @@
 <script>
 export default {
   name: "TaskCard",
-  props: ['task'],
+  props: ["task"],
   methods: {
-      deleteTask(id){
-          this.$emit("deleteTask", id)
-      }
-  }
+    deleteTask(id) {
+      this.$emit("deleteTask", id);
+    },
+    showEditTask(task) {
+      this.$emit("showEditTask", task);
+    },
+  },
 };
 </script>
 

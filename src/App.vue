@@ -22,6 +22,7 @@
     <MainPage
       :tasks="tasks"
       @deleteTask="deleteTask"
+      @showEditTask="showEditTask"
       v-if="page === 'main'"
     ></MainPage>
 
@@ -31,7 +32,12 @@
       @addNewTask="addNewTask"
     ></TaskAddPage>
 
-    <TaskEditPage v-if="page === 'editTask'"></TaskEditPage>
+    <TaskEditPage
+      v-if="page === 'editTask'"
+      :editTask="editTask"
+      @cancel="cancel"
+      @updateTask="updateTask"
+    ></TaskEditPage>
   </div>
 </template>
 
@@ -155,7 +161,6 @@ export default {
           password: password,
         })
         .then((response) => {
-
           // console.log('>>> berhasil ', response.data)
 
           this.showLoginPage();
@@ -166,7 +171,6 @@ export default {
             showConfirmButton: false,
             timer: 1500,
           });
-
         })
         .catch((err) => {
           // console.log(err);
@@ -176,8 +180,8 @@ export default {
             title: err,
             showConfirmButton: false,
             timer: 1500,
-          })
-        })
+          });
+        });
     },
     addNewTask(inputNewTask) {
       let title = inputNewTask.title;
@@ -283,11 +287,11 @@ export default {
             title: "You don't have permision !",
             showConfirmButton: false,
             timer: 1500,
-          })
-        })
+          });
+        });
     },
     showEditTask(task) {
-      // console.log('>>> edit task', task)
+      console.log(">>> edit task", task);
 
       if (localStorage.user !== task.User.email) {
         Swal.fire({
@@ -301,6 +305,42 @@ export default {
         console.log(">>> editTask : ", this.editTask);
         this.page = "editTask";
       }
+    },
+    updateTask(editTask) {
+      console.log(">>> edit Task", editTask);
+
+      let id = editTask.id;
+      let title = editTask.title;
+      let CategoryId = editTask.CategoryId;
+
+      let URL = this.URL_SERVER + `/task/${id}/${CategoryId}`;
+      console.log(">>> URL : ", URL);
+      axios
+        .put(
+          URL,
+          { title },
+          {
+            headers: { access_token: localStorage.access_token },
+          }
+        )
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            title: "Success updated!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
+          this.checkAuth();
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: err,
+            showConfirmButton: false,
+            timer: 1500,
+          })
+        })
     },
   },
 };
