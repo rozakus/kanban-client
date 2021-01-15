@@ -62,7 +62,7 @@ export default {
   name: "App",
   data() {
     return {
-      URL_SERVER: "http://localhost:3000",
+      URL_SERVER: "https://kanban-server-by-rozakus.herokuapp.com",
       user: "",
       tasks: [],
       categories: [],

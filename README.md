@@ -7,6 +7,10 @@ by Abdul Rozak
 **How to**
 ---
 ```
+Deployed link : https://kanban-by-rozakus.web.app
+```
+
+```
 settings   : npm i
 run client : parcel index.html
 url        : http://localhost:1234
