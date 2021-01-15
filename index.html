@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Kanban</title>
 
     <!-- Google Sign In -->
     <meta name="google-signin-client_id"
@@ -27,7 +27,7 @@
         }
 
         body {
-            background: url('./assets/background-03.jpg') no-repeat center center fixed;
+            background: url("./src/assets/background-03.jpg") no-repeat center center fixed;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             background-size: cover;
@@ -47,147 +47,13 @@
 </head>
 
 <body>
+
     <div id="app">
-
-        <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-light" style="height: 80px;">
-            <div class="container" style="display: flex; justify-content: space-between;">
-                <img src="./assets/logo.png" width="80 px" />
-                <button v-if="isUserLogin" class="btn btn-sm btn-dark">Welcome {{user}}</button>
-                <button v-if="isUserLogin" @click="showAddNewTaskPage" class="btn btn-sm btn-primary">add New Task</button>
-                <button v-if="isUserLogin" @click="logout" class="btn btn-sm btn-success shadow" >logout</button>
-            </div>
-        </nav>
-
-        <!-- Login -->
-        <section v-if="page === 'login'" style="display: flex; justify-content: flex-end; margin: 50px 0;"
-            id="page-login">
-            <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Login</h2>
-                    <form @submit.prevent="login">
-                        <label for="emailLogin">Email address</label>
-                        <input v-model="inputLogin.email" type="email" id="emailLogin" class="form-control"
-                            placeholder="Email address" required autofocus style="margin: 15px 0px;">
-
-                        <label for="passwordLogin">Password</label>
-                        <input v-model="inputLogin.password" type="password" id="passwordLogin" class="form-control"
-                            placeholder="Password" required style="margin: 15px 0px;">
-
-                        <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
-                        <button @click="showRegisterPage" class="w-100 btn btn-lg btn-danger" type="button"
-                            id="to-page-register" style="margin: 15px 0px;">Register an Account</button>
-                        <!-- <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div> -->
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- Register -->
-        <section v-if="page === 'register'" style="display: flex; justify-content: flex-end; margin: 50px 0;"
-            id="page-register">
-            <div class="col-3 card shadow" style="width: 22rem; margin-right: 100px;">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Register</h2>
-                    <form @submit.prevent="register">
-                        <label for="emailRegister">Email address</label>
-                        <input v-model="inputRegister.email" type="email" id="emailRegister" class="form-control"
-                            placeholder="Email address" required autofocus style="margin: 15px 0px;">
-
-                        <label for="passwordRegister">Password</label>
-                        <input v-model="inputRegister.password" type="password" id="passwordRegister"
-                            class="form-control" placeholder="Password" required style="margin: 15px 0px;">
-
-                        <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
-                        <button @click="showLoginPage" class="w-100 btn btn-lg btn-warning" type="button"
-                            id="to-page-login" style="margin: 15px 0px;">Already have an account</button>
-                        <!-- <div class="g-signin2" data-onsuccess="onSignIn" id="g-signin2">Login using Google Account</div> -->
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- Page Task -->
-        <section v-if="page === 'main'" style="height: calc(100vh - 90px); width: 100vw;">
-            <div class="row flex-row align-items-start justify-content-evenly" style="min-height: 100%;">
-
-                <div v-for="(categories, indexCategory) in tasks" :key="indexCategory" class="col-3"
-                    style="height: 100%;">
-                    <div class="card flex-column shadow" style="height: 100%;">
-                        <div class="card-header bg-danger text-center fs-6 fw-bold fst-italic shadow"
-                            style="border-radius: 20px;">{{categories.category}}</div>
-                        <div class="card-body" style="flex-grow: 1;">
-                            <div v-for="(task, indexTask) in categories.Tasks" :key="indexTask"
-                                class="my-2 card btn-dark bg-dark" style="font-size: 12px;">
-                                <div>
-                                    <p class="fw-bold fst-italic m-0">{{task.title}}</p>
-                                    <p class="m-0">by {{task.User.email}}</p>
-                                </div>
-                                <div class="my-1">
-                                    <button @click="deleteTask(task.id)" class="btn btn-sm btn-dark bi bi-trash-fill"
-                                        style="padding: 2px 5px;">delete</button>
-                                    <button @click="showEditTask(task)" class="btn btn-sm btn-dark bi bi-tags-fill"
-                                        style="padding: 2px 5px;">edit</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Page Add Task -->
-        <section v-if="page === 'addTask'" style="height: calc(100vh - 90px); width: 100vw;">
-            <div class="container text-center">
-                <div class="card">
-                    <form @submit.prevent="addNewTask">
-                        <h4>New Task</h4>
-                        <div class="input-group my-5">
-                            <span class="input-group-text">New Task</span>
-                            <textarea v-model="inputNewTask.title" class="form-control" aria-label="With textarea"
-                                style="height: 100px;" required></textarea>
-                        </div>
-                        <div class="input-group mb-3 my-5">
-                            <label class="input-group-text" for="inputGroupSelect01">Category</label>
-                            <select class="form-select" id="inputGroupSelect01" v-model="inputNewTask.CategoryId" required>
-                                <option selected>Choose Category</option>
-                                <option v-for="(category) in categories" :key="category.id" :value="category.id">{{category.category}}</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button @click="cancel" class="btn btn-danger">Cancel</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- Page Edit Task -->
-        <section v-if="page === 'editTask'" style="height: calc(100vh - 90px); width: 100vw;">
-            <div class="container text-center">
-                <div class="card">
-                    <form @submit.prevent="updateTask">
-                        <h4>Edit Task</h4>
-                        <div class="input-group my-5">
-                            <span class="input-group-text">Task</span>
-                            <textarea v-model="editTask.title" class="form-control" aria-label="With textarea"
-                                style="height: 100px;" required></textarea>
-                        </div>
-                        <div class="input-group mb-3 my-5">
-                            <label class="input-group-text" for="inputGroupSelect01">Category</label>
-                            <select class="form-select" id="inputGroupSelect01" v-model="editTask.CategoryId" required>
-                                <option selected>Choose Category</option>
-                                <option v-for="(category) in categories" :key="category.id" :value="category.id">{{category.category}}</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <button @click="cancel" class="btn btn-danger">Cancel</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
+        
     </div>
+
+    <!-- Google -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -200,14 +66,9 @@
     <!-- Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <!-- Google -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-
-    <!-- Vue -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-
     <!-- Js -->
-    <script src="./script.js"></script>
+    <script src="./src/main.js"></script>
+
 </body>
 
 </html>
