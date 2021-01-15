@@ -7,7 +7,7 @@ by Abdul Rozak
 **How to**
 ---
 ```
-Deployed link : https://kanban-by-rozakus.web.app
+Deployed link : https://kanban-rozakus.web.app/
 ```
 
 ```
