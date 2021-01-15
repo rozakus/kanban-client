@@ -42,6 +42,13 @@
           >
             Already have an account
           </button>
+          <button
+            v-google-signin-button="clientId"
+            class="google-signin-button btn btn-lg btn-outline-primary text-center"
+          >
+            <i class="bi bi-google mx-2" />
+            &nbsp; Continue with Google
+          </button>
         </form>
       </div>
     </div>
@@ -49,14 +56,21 @@
 </template>
 
 <script>
+import GoogleSignInButton from "vue-google-signin-button-directive";
+
 export default {
   name: "RegisterPage",
+  directives: {
+    GoogleSignInButton,
+  },
   data() {
     return {
       inputRegister: {
         email: "",
         password: "",
       },
+      clientId:
+        "847872434739-ieov91f4btpg8551tira12pvdtatudrg.apps.googleusercontent.com",
     };
   },
   methods: {
@@ -65,6 +79,14 @@ export default {
     },
     showLoginPage() {
       this.$emit("showLoginPage");
+    },
+    OnGoogleAuthSuccess(id_token) {
+      // Receive the idToken and make your magic with the backend
+      console.log(">>> id token", id_token);
+      this.$emit("loginGoogle", id_token);
+    },
+    OnGoogleAuthFail(error) {
+      console.log(error);
     },
   },
 };

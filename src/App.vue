@@ -11,19 +11,21 @@
       v-if="page === 'login'"
       @login="login"
       @showRegisterPage="showRegisterPage"
+      @loginGoogle="loginGoogle"
     ></LoginPage>
 
     <RegisterPage
       v-if="page === 'register'"
       @register="register"
       @showLoginPage="showLoginPage"
+      @loginGoogle="loginGoogle"
     ></RegisterPage>
 
     <MainPage
+      v-if="page === 'main'"
       :tasks="tasks"
       @deleteTask="deleteTask"
       @showEditTask="showEditTask"
-      v-if="page === 'main'"
     ></MainPage>
 
     <TaskAddPage
@@ -342,6 +344,26 @@ export default {
             showConfirmButton: false,
             timer: 1500,
           });
+        });
+    },
+    loginGoogle(id_token) {
+      let URL = this.URL_SERVER + "/user/loginGoogle";
+      console.log(">>> URL AppVue : ", URL);
+
+      axios
+        .post(URL, {
+          id_token,
+        })
+        .then((response) => {
+          console.log(">>> google : ", response);
+
+          localStorage.setItem("access_token", response.data.access_token);
+          localStorage.setItem('user', response.data.email)
+
+          this.checkAuth();
+        })
+        .catch((err) => {
+          console.log(err);
         });
     },
   },
