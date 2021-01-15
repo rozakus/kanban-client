@@ -34,6 +34,7 @@
             Login
           </button>
           <button
+          @click="showRegisterPage"
             class="w-100 btn btn-lg btn-danger"
             type="button"
             id="to-page-register"
@@ -62,6 +63,9 @@ export default {
     login() {
       this.$emit("login", this.inputLogin);
     },
+    showRegisterPage(){
+      this.$emit('showRegisterPage')
+    }
   },
 };
 </script>

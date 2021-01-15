@@ -1,17 +1,35 @@
 <template>
   <div>
-    <NavigationBar :isUserLogin="isUserLogin"></NavigationBar>
+    <NavigationBar
+      :isUserLogin="isUserLogin"
+      :user="user"
+      @logout="logout"
+      @showAddNewTaskPage="showAddNewTaskPage"
+    ></NavigationBar>
 
     <LoginPage
       v-if="page === 'login'"
       @login="login"
+      @showRegisterPage="showRegisterPage"
     ></LoginPage>
 
-    <RegisterPage v-if="page === 'register'"></RegisterPage>
+    <RegisterPage
+      v-if="page === 'register'"
+      @register="register"
+      @showLoginPage="showLoginPage"
+    ></RegisterPage>
 
-    <MainPage v-if="page === 'main'"></MainPage>
+    <MainPage
+      :tasks="tasks"
+      @deleteTask="deleteTask"
+      v-if="page === 'main'"
+    ></MainPage>
 
-    <TaskAddPage v-if="page === 'addTask'"></TaskAddPage>
+    <TaskAddPage
+      v-if="page === 'addTask'"
+      @cancel="cancel"
+      @addNewTask="addNewTask"
+    ></TaskAddPage>
 
     <TaskEditPage v-if="page === 'editTask'"></TaskEditPage>
   </div>
@@ -40,18 +58,6 @@ export default {
       categories: [],
       page: "",
       isUserLogin: false,
-      // inputLogin: {
-      //   email: "",
-      //   password: "",
-      // },
-      inputRegister: {
-        email: "",
-        password: "",
-      },
-      inputNewTask: {
-        title: "",
-        CategoryId: null,
-      },
       editTask: {},
     };
   },
@@ -64,7 +70,7 @@ export default {
     TaskEditPage,
   },
   created() {
-    console.log(">>> created");
+    // console.log(">>> created");
     this.checkAuth();
   },
   methods: {
@@ -75,40 +81,46 @@ export default {
         this.isUserLogin = true;
         this.user = localStorage.user;
       } else {
-        console.log(">>> isUserLogin : ", this.isUserLogin);
+        // console.log(">>> isUserLogin : ", this.isUserLogin);
         this.page = "login";
         this.isUserLogin = false;
       }
     },
-    async login(payload) {
-      try {
-        // let { email, password } = this.inputLogin;
-        console.log(">>> inputlogin : ", payload);
+    login(payload) {
+      // console.log(">>> inputlogin : ", payload);
+      let { email, password } = payload;
 
-        // let URL = this.URL_SERVER + "/user/login";
-        // let response = await axios.post(URL, {
-        //   email: email,
-        //   password: password,
-        // });
+      let URL = this.URL_SERVER + "/user/login";
+      axios
+        .post(URL, {
+          email: email,
+          password: password,
+        })
+        .then((response) => {
+          // console.log(">>> berhasil login", response.data);
+          localStorage.setItem("access_token", response.data.access_token);
+          localStorage.setItem("user", email);
 
-        // console.log('>>> berhasil login', response.data)
-        // localStorage.setItem("access_token", response.data.access_token);
-        // localStorage.setItem("user", email);
-        // this.user = localStorage.user;
+          this.user = localStorage.user;
+          this.checkAuth();
 
-        // this.inputLogin.email = "";
-        // this.inputLogin.password = "";
+          Swal.fire({
+            icon: "success",
+            title: `You are login using ${email}!`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        })
+        .catch((err) => {
+          // console.log(err);
 
-        // this.checkAuth();
-        // Swal.fire({
-        //   icon: "success",
-        //   title: `You are login using ${email}!`,
-        //   showConfirmButton: false,
-        //   timer: 1500,
-        // });
-      } catch (err) {
-        console.log(err);
-      }
+          Swal.fire({
+            icon: "error",
+            title: err,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        });
     },
     logout() {
       // console.log('logout')
@@ -119,10 +131,10 @@ export default {
       // console.log('>>> categories : ', this.categories)
 
       localStorage.clear();
-      let auth2 = gapi.auth2.getAuthInstance();
-      auth2.signOut().then(function () {
-        console.log("User signed out.");
-      });
+      // let auth2 = gapi.auth2.getAuthInstance();
+      // auth2.signOut().then(function () {
+      //   console.log("User signed out.");
+      // });
 
       this.checkAuth();
       Swal.fire({
@@ -132,29 +144,103 @@ export default {
         timer: 1500,
       });
     },
-    async getAllTask() {
-      try {
-        let URL = this.URL_SERVER + "/task";
-        let response = await axios.get(URL, {
+    register(inputRegister) {
+      let { email, password } = inputRegister;
+      // console.log('>>> input register', email, password)
+
+      let URL = this.URL_SERVER + "/user/register";
+      axios
+        .post(URL, {
+          email: email,
+          password: password,
+        })
+        .then((response) => {
+
+          // console.log('>>> berhasil ', response.data)
+
+          this.showLoginPage();
+
+          Swal.fire({
+            icon: "success",
+            title: `${email} is success registered, please login !`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
+        })
+        .catch((err) => {
+          // console.log(err);
+
+          Swal.fire({
+            icon: "error",
+            title: err,
+            showConfirmButton: false,
+            timer: 1500,
+          })
+        })
+    },
+    addNewTask(inputNewTask) {
+      let title = inputNewTask.title;
+      let CategoryId = +inputNewTask.CategoryId;
+      // console.log(">>> addNewTask", title, CategoryId, typeof CategoryId);
+
+      let data = {
+        title: title,
+        CategoryId: CategoryId,
+      };
+
+      let URL = this.URL_SERVER + "/task";
+      // console.log(">>> URL : ", URL);
+
+      axios
+        .post(URL, data, {
           headers: { access_token: localStorage.access_token },
-        });
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            title: `New task : ${title} is Added from ${localStorage.user}!`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
 
-        // console.log(response.data)
-        this.tasks = response.data;
-        this.categories = response.data.map((category) => {
-          return {
-            id: category.id,
-            category: category.category,
-          };
+          this.checkAuth();
+        })
+        .catch((err) => {
+          console.log(err);
+          Swal.fire({
+            icon: "error",
+            title: err,
+            showConfirmButton: false,
+            timer: 1500,
+          });
         });
-        // console.log('>>> task : ')
-        // console.log(this.tasks)
+    },
+    getAllTask() {
+      let URL = this.URL_SERVER + "/task";
+      axios
+        .get(URL, {
+          headers: { access_token: localStorage.access_token },
+        })
+        .then((response) => {
+          // console.log(response.data)
+          this.tasks = response.data;
+          this.categories = response.data.map((category) => {
+            return {
+              id: category.id,
+              category: category.category,
+            };
+          });
 
-        // console.log('>>> categories : ')
-        // console.log(this.categories)
-      } catch (err) {
-        console.log(err);
-      }
+          // console.log(">>> task : ");
+          // console.log(this.tasks);
+
+          // console.log(">>> categories : ");
+          // console.log(this.categories);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     showLoginPage() {
       this.page = "login";
@@ -163,39 +249,42 @@ export default {
       this.page = "register";
     },
     showAddNewTaskPage() {
+      // console.log("show add new task");
       this.page = "addTask";
     },
     cancel() {
       this.checkAuth();
     },
-    async deleteTask(idTask) {
-      try {
-        console.log(">>> delete task id", idTask);
+    deleteTask(idTask) {
+      // console.log(">>> delete task id", idTask);
 
-        let URL = this.URL_SERVER + `/task/${idTask}`;
-        console.log(URL);
-        let deleteTask = await axios.delete(URL, {
+      let URL = this.URL_SERVER + `/task/${idTask}`;
+      // console.log(URL);
+
+      axios
+        .delete(URL, {
           headers: { access_token: localStorage.access_token },
-        });
-        console.log(deleteTask);
+        })
+        .then((response) => {
+          this.checkAuth();
 
-        this.checkAuth();
+          Swal.fire({
+            icon: "success",
+            title: "Success deleted!",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        })
 
-        Swal.fire({
-          icon: "success",
-          title: "Success deleted!",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      } catch (err) {
-        console.log(err);
-        Swal.fire({
-          icon: "error",
-          title: "You don't have permision !",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
+        .catch((err) => {
+          // console.log(err);
+          Swal.fire({
+            icon: "error",
+            title: "You don't have permision !",
+            showConfirmButton: false,
+            timer: 1500,
+          })
+        })
     },
     showEditTask(task) {
       // console.log('>>> edit task', task)
